@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Slider?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Font?>
+
+<Pane fx:id="rootPane" prefHeight="398.0" prefWidth="704.0" style="-fx-background-color: #cdc6b2;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ib.ia_programme.controllers.DailyScalesController">
+   <children>
+      <ImageView fitHeight="241.0" fitWidth="322.0" layoutX="396.0" layoutY="-13.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@scalesBackgroundImage.jpg" />
+         </image>
+      </ImageView>
+      <Button fx:id="backButton" layoutY="2.0" mnemonicParsing="false" onAction="#onBackButtonClick" text="BACK" />
+      <Label fx:id="rateMyDayLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="154.0" layoutY="89.0" prefHeight="21.0" prefWidth="428.0" text="RATE MY DAY" textAlignment="CENTER">
+         <font>
+            <Font size="20.0" />
+         </font>
+      </Label>
+      <Label fx:id="anxietyLogLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="154.0" layoutY="178.0" prefHeight="21.0" prefWidth="428.0" text="ANXIETY LOG">
+         <font>
+            <Font size="20.0" />
+         </font>
+      </Label>
+      <Label fx:id="physicalWellbeingLogLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="154.0" layoutY="272.0" prefHeight="21.0" prefWidth="428.0" text="PHYSICAL WELLBEING LOG">
+         <font>
+            <Font size="20.0" />
+         </font>
+      </Label>
+      <Slider fx:id="rateMyDaySlider" blockIncrement="1.0" layoutX="298.0" layoutY="130.0" majorTickUnit="1.0" max="5.0" min="1.0" minorTickCount="0" showTickLabels="true" snapToTicks="true" style="-fx-scale-shape: graphical;" value="3" />
+      <Slider fx:id="anxietyLogSlider" blockIncrement="1.0" layoutX="298.0" layoutY="222.0" majorTickUnit="1.0" max="5.0" min="1.0" minorTickCount="0" showTickLabels="true" snapToTicks="true" value="3" />
+      <Slider fx:id="physicalWellbeingLogSlider" blockIncrement="1.0" layoutX="298.0" layoutY="314.0" majorTickUnit="1.0" max="5.0" min="1.0" minorTickCount="0" showTickLabels="true" snapToTicks="true" value="3" />
+      <Button fx:id="rateMyDaySaverButton" layoutX="504.0" layoutY="125.0" mnemonicParsing="false" onAction="#onRateMyDaySaverButtonClick" text="SAVE" />
+      <Button fx:id="anxietyLogSaverButton" layoutX="504.0" layoutY="217.0" mnemonicParsing="false" onAction="#onAnxietyLogSaverButtonClick" text="SAVE" />
+      <Button fx:id="physicalWellbeingLogSaverButton" layoutX="504.0" layoutY="310.0" mnemonicParsing="false" onAction="#onPhysicalWellbeingLogSaverButtonClick" text="SAVE" />
+      <ImageView fx:id="calmImage" fitHeight="30.0" fitWidth="30.0" layoutX="262.0" layoutY="211.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@relieved.png" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="stressedImage" fitHeight="30.0" fitWidth="30.0" layoutX="442.0" layoutY="211.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@exploding_head.png" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="badImage" fitHeight="30.0" fitWidth="30.0" layoutX="262.0" layoutY="315.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@-1.png" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="goodImage" fitHeight="30.0" fitWidth="30.0" layoutX="442.0" layoutY="303.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@+1.png" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="star1Image" fitHeight="45.0" fitWidth="36.0" layoutX="259.0" layoutY="112.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@star1.png" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="star5Image" fitHeight="45.0" fitWidth="36.0" layoutX="439.0" layoutY="112.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@star5.png" />
+         </image>
+      </ImageView>
+   </children>
+</Pane>
+

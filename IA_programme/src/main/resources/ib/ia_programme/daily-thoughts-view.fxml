@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Font?>
+
+<ScrollPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="761.0" prefWidth="720.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ib.ia_programme.controllers.DailyThoughtsController">
+   <content>
+      <Pane prefHeight="737.0" prefWidth="704.0" style="-fx-background-color: #cdc6b2;">
+         <children>
+            <ImageView fitHeight="308.0" fitWidth="259.0" layoutY="-3.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@thoughtsBackgroundImage.jpg" />
+               </image>
+            </ImageView>
+            <Button fx:id="backButton" layoutY="2.0" mnemonicParsing="false" onAction="#onBackButtonClick" text="BACK" />
+            <Label fx:id="thingsToMakeTheDaySpecialLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="130.0" layoutY="56.0" prefHeight="21.0" prefWidth="428.0" text="THINGS TO MAKE THE DAY SPECIAL" textAlignment="CENTER">
+               <font>
+                  <Font size="20.0" />
+               </font>
+            </Label>
+            <Label fx:id="todaysToDoListLabel" alignment="CENTER" layoutX="130.0" layoutY="231.0" prefHeight="21.0" prefWidth="428.0" text="TODAY'S TO-DO LIST">
+               <font>
+                  <Font size="20.0" />
+               </font>
+            </Label>
+            <Label fx:id="goalsToKeepMeGoingLabel" alignment="CENTER" layoutX="138.0" layoutY="396.0" prefHeight="21.0" prefWidth="428.0" text="GOALS TO KEEP ME GOING">
+               <font>
+                  <Font size="20.0" />
+               </font>
+            </Label>
+            <Label fx:id="gratefulThoughtsLabel" alignment="CENTER" layoutX="138.0" layoutY="566.0" prefHeight="21.0" prefWidth="428.0" text="GRATEFUL THOUGHTS">
+               <font>
+                  <Font size="20.0" />
+               </font>
+            </Label>
+            <TextArea fx:id="thingsToMakeTheDaySpecialTextArea" layoutX="169.0" layoutY="94.0" prefHeight="114.0" prefWidth="350.0" />
+            <TextArea fx:id="goalsToKeepMeGoingTextArea" layoutX="169.0" layoutY="432.0" prefHeight="114.0" prefWidth="350.0" />
+            <TextArea fx:id="gratefulThoughtsTextArea" layoutX="169.0" layoutY="603.0" prefHeight="114.0" prefWidth="350.0" />
+            <TextArea fx:id="todaysToDoListTextArea" layoutX="169.0" layoutY="263.0" prefHeight="114.0" prefWidth="350.0" />
+            <Button fx:id="thingsToMakeTheDaySpecialSaverButton" layoutX="553.0" layoutY="139.0" mnemonicParsing="false" onAction="#onThingsToMakeTheDaySpecialSaverButtonClick" text="SAVE" />
+            <Button fx:id="todaysToDoListSaverButton" layoutX="553.0" layoutY="308.0" mnemonicParsing="false" onAction="#onTodaysToDoListSaverButtonClick" text="SAVE" />
+            <Button fx:id="goalsToKeepMeGoingSaverButton" layoutX="553.0" layoutY="476.0" mnemonicParsing="false" onAction="#onGoalsToKeepMeGoingSaverButtonClick" text="SAVE" />
+            <Button fx:id="gratefulThoughtsSaverButton" layoutX="553.0" layoutY="648.0" mnemonicParsing="false" onAction="#onGratefulThoughtsSaverButtonClick" text="SAVE" />
+         </children>
+      </Pane>
+   </content>
+</ScrollPane>

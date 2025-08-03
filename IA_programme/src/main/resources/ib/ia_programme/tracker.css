@@ -1,0 +1,115 @@
+.label{
+    -fx-background-color: #eeeae2;
+    -fx-font-family: "Lucida Console";
+    -fx-text-fill: black;
+    -fx-background-radius: 15;
+    -fx-border-color: black;
+    -fx-border-width: 2;
+    -fx-border-radius: 15;
+}
+#motivationalMessageLabel{
+    -fx-font-size: 30;
+}
+.button{
+    -fx-background-color: #eeeae2;
+    -fx-font-family: "Lucida Console";
+    -fx-text-fill: black;
+    -fx-background-radius: 15;
+    -fx-border-color: black;
+    -fx-border-width: 2;
+    -fx-border-radius: 15;
+    -fx-font-weight: bold;
+    -fx-padding: 5 10 5 10;
+}
+.button:focused{
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+#dailyScalesButton, #dailyThoughtsButton, #personalImprovementButton{
+    -fx-font-size: 20;
+}
+
+#thingsToMakeTheDaySpecialLabel, #todaysToDoListLabel, #goalsToKeepMeGoingLabel, #gratefulThoughtsLabel, #moodGraphButton, #anxietyGraphButton, #physicalGraphButton, #dailyThoughtsCalendarButton{
+    -fx-font-size: 20;
+}
+.slider .track{
+    -fx-background-color: #86858b;
+}
+.slider .thumb{
+    -fx-background-color: #f2f1ec;
+    -fx-border-color: #86858b;
+    -fx-border-width: 2;
+    -fx-border-radius: 15;
+}
+.slider .tick-label{
+    -fx-font-family: "Lucida Console";
+    -fx-text-fill: black;
+}
+.alert{
+    -fx-background-color: #cdc6b2;
+    -fx-font-family: "Lucida Console";
+}
+.calendar-header{
+    -fx-font-family: "Lucida Console";
+    -fx-text-fill: black;
+    -fx-font-weight: bold;
+    -fx-background-color: #eeeae2;
+    -fx-padding: 5;
+    -fx-border-color: black;
+    -fx-border-width: 1;
+    -fx-alignment: center;
+    -fx-background-radius: 2;
+    -fx-border-radius: 2;
+}
+#monthLabel{
+    -fx-font-family: "Lucida Console";
+    -fx-text-fill: black;
+    -fx-font-weight: bold;
+    -fx-background-color: #eeeae2;
+    -fx-padding: 5;
+    -fx-border-color: black;
+    -fx-border-width: 1;
+    -fx-alignment: center;
+    -fx-background-radius: 2;
+    -fx-border-radius: 2;
+}
+#previousMonthButton, #nextMonthButton{
+    -fx-font-family: "Lucida Console";
+    -fx-text-fill: black;
+    -fx-font-weight: bold;
+    -fx-background-color: #eeeae2;
+    -fx-padding: 5;
+    -fx-border-color: black;
+    -fx-border-width: 1;
+    -fx-alignment: center;
+    -fx-background-radius: 2;
+    -fx-border-radius: 2;
+}
+.calendar-day{
+    -fx-font-family: "Lucida Console";
+    -fx-text-fill: black;
+    -fx-background-color: #eeeae2;
+    -fx-padding: 5;
+    -fx-border-color: black;
+    -fx-border-width: 2;
+    -fx-border-radius: 5;
+    -fx-alignment: center;
+    -fx-background-radius: 2;
+    -fx-border-radius: 2;
+    -fx-pref-width: 40;
+    -fx-pref-height: 40;
+}
+.calendar-day-filled{
+    -fx-font-family: "Lucida Console";
+    -fx-text-fill: black;
+    -fx-background-color: #86858b;
+    -fx-padding: 5;
+    -fx-border-color: black;
+    -fx-border-width: 2;
+    -fx-border-radius: 5;
+    -fx-alignment: center;
+    -fx-background-radius: 2;
+    -fx-border-radius: 2;
+    -fx-pref-width: 40;
+    -fx-pref-height: 40;
+}

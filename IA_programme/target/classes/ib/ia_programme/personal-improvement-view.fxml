@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+
+<ScrollPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1117.0" prefWidth="704.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ib.ia_programme.controllers.PersonalImprovementController">
+   <content>
+      <Pane prefHeight="1100.0" prefWidth="702.0" style="-fx-background-color: #cdc6b2;">
+         <children>
+            <ImageView fitHeight="476.0" fitWidth="330.0" layoutX="372.0" layoutY="750.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@improvementBackgroundImage.jpg" />
+               </image>
+            </ImageView>
+            <Button fx:id="backButton" layoutY="1.0" mnemonicParsing="false" onAction="#onBackButtonClick" text="BACK" />
+            <VBox fx:id="moodGraphContainer" layoutX="218.0" layoutY="96.0" managed="false" prefHeight="168.0" prefWidth="267.0" visible="false" />
+            <VBox fx:id="anxietyGraphContainer" layoutX="217.0" layoutY="304.0" managed="false" prefHeight="168.0" prefWidth="267.0" visible="false" />
+            <VBox fx:id="physicalGraphContainer" layoutX="218.0" layoutY="517.0" managed="false" prefHeight="168.0" prefWidth="267.0" visible="false" />
+            <CheckBox fx:id="predictionCheck" layoutX="587.0" layoutY="6.0" mnemonicParsing="false" text="Show Prediction" />
+            <VBox alignment="CENTER" layoutX="179.0" layoutY="36.0" prefHeight="83.0" prefWidth="345.0">
+               <children>
+                  <Button fx:id="moodGraphButton" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#onMoodGraphButtonClick" text="Rate My Day" />
+               </children>
+            </VBox>
+            <VBox alignment="CENTER" layoutX="178.0" layoutY="243.0" prefHeight="83.0" prefWidth="345.0">
+               <children>
+                  <Button fx:id="anxietyGraphButton" mnemonicParsing="false" onAction="#onAnxietyGraphButtonClick" text="Anxiety Log" />
+               </children>
+            </VBox>
+            <VBox alignment="CENTER" layoutX="179.0" layoutY="453.0" prefHeight="83.0" prefWidth="345.0">
+               <children>
+                  <Button fx:id="physicalGraphButton" mnemonicParsing="false" onAction="#onPhysicalGraphButtonClick" text="Physical Wellbeing Log" />
+               </children>
+            </VBox>
+            <VBox alignment="CENTER" layoutX="179.0" layoutY="667.0" prefHeight="83.0" prefWidth="345.0">
+               <children>
+                  <Button fx:id="dailyThoughtsCalendarButton" mnemonicParsing="false" onAction="#onDailyThoughtsCalendarButtonClick" text="Daily Thoughts" />
+               </children>
+            </VBox>
+            <HBox alignment="CENTER" layoutY="735.0" prefWidth="702.0">
+               <VBox fx:id="calendarContainer" alignment="CENTER" managed="false" spacing="10" visible="false">
+                  <children>
+                     <HBox alignment="CENTER" spacing="10">
+                        <Button fx:id="previousMonthButton" onAction="#onPreviousMonthButtonClick" text="⟨⟨ Previous" />
+                        <Label fx:id="monthLabel" />
+                        <Button fx:id="nextMonthButton" onAction="#onNextMonthButtonClick" text="Next ⟩⟩" />
+                     </HBox>
+                     <GridPane fx:id="calendarGrid" alignment="CENTER" hgap="10" maxHeight="Infinity" maxWidth="Infinity" prefHeight="240" prefWidth="320" vgap="10" />
+                  </children>
+               </VBox>
+            </HBox>
+         </children>
+      </Pane>
+   </content>
+</ScrollPane>
