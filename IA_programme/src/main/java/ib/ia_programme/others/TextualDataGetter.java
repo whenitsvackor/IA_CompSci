@@ -10,7 +10,7 @@ public class TextualDataGetter {
     private String goals;
     private String gratitude;
 
-    public DailyThoughtLogs(LocalDate entry_date, String overview, String todo, String goals, String gratitude){
+    public TextualDataGetter(LocalDate entry_date, String overview, String todo, String goals, String gratitude){
         this.entry_date = entry_date;
         this.overview = overview;
         this.todo = todo;
