@@ -1,5 +1,7 @@
 # IA_CompSci
 
-edited t he file
+edited the file
 
 edited in vsc
+
+renamed two classes in 'others' package (are they even useful?)

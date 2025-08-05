@@ -1,7 +1,7 @@
 package ib.ia_programme.controllers;
 
-import ib.ia_programme.others.DailyThoughtLogs;
-import ib.ia_programme.others.ScaleDataPoint;
+import ib.ia_programme.others.TextualDataGetter;
+import ib.ia_programme.others.NumericDataGetter;
 import ib.ia_programme.util.DBConnection;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
