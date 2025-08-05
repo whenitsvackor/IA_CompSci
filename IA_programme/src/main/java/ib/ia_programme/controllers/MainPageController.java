@@ -26,53 +26,69 @@ public class MainPageController {
         this.stage = stage;
     }
 
-    public void switchScene(String fxmlFilePath, Button sourceButton) throws IOException{
-        this.stage = (Stage) sourceButton.getScene().getWindow();
-        Parent root = FXMLLoader.load(getClass().getResource(fxmlFilePath));
-        Scene newScene = new Scene(root, 720, 400);
-        String css = getClass().getResource("/ib/ia_programme/tracker.css").toExternalForm();
-        newScene.getStylesheets().add(css);
-        stage.setScene(newScene);
+    public void switchScene(String fxmlPath, Button sourceButton) throws IOException {
+        Stage currentStage = (Stage) sourceButton.getScene().getWindow();
+        Parent root = FXMLLoader.load(getClass().getResource(fxmlPath));
+        Scene scene = new Scene(root, 720, 400);
+        
+        // Apply CSS styling
+        String cssPath = getClass().getResource("/ib/ia_programme/tracker.css").toExternalForm();
+        scene.getStylesheets().add(cssPath);
+        
+        currentStage.setScene(scene);
     }
 
-    @FXML public void initialize() {
-        onRegenerateButtonClick();
+    @FXML 
+    public void initialize() {
+        // Load initial motivational message
+        refreshMotivationalMessage();
     }
 
-    @FXML public void onDailyScalesButtonClick() throws IOException{
+    @FXML 
+    public void onDailyScalesButtonClick() throws IOException {
         switchScene("/ib/ia_programme/daily-scales-view.fxml", dailyScalesButton);
         stage.setTitle("TRACKER - DAILY SCALES");
     }
 
-    @FXML public void onDailyThoughtsButtonClick() throws IOException{
+    @FXML 
+    public void onDailyThoughtsButtonClick() throws IOException {
         switchScene("/ib/ia_programme/daily-thoughts-view.fxml", dailyThoughtsButton);
         stage.setTitle("TRACKER - DAILY THOUGHTS");
     }
 
-    @FXML public void onPersonalImprovementButtonClick() throws IOException{
+    @FXML 
+    public void onPersonalImprovementButtonClick() throws IOException {
         switchScene("/ib/ia_programme/personal-improvement-view.fxml", personalImprovementButton);
         stage.setTitle("TRACKER - PERSONAL IMPROVEMENT");
     }
 
-    @FXML public void onRegenerateButtonClick(){
-        String label = MotivationalMessagesCreator.messageCreator();
-        setMotivationalMessageSize(label);
+    @FXML 
+    public void onRegenerateButtonClick() {
+        refreshMotivationalMessage();
     }
 
-    private void setMotivationalMessageSize(String message){
+    private void refreshMotivationalMessage() {
+        String message = MotivationalMessagesCreator.messageCreator();
+        adjustFontSizeForMessage(message);
+    }
+
+    private void adjustFontSizeForMessage(String message) {
         double maxWidth = motivationalMessageLabel.getPrefWidth();
-        double fontSize = 36;
-        double minFontSize = 10;
+        double fontSize = 36.0;
+        double minFontSize = 10.0;
         String fontFamily = motivationalMessageLabel.getFont().getFamily();
-        Text text = new Text(message);
-        while (fontSize > minFontSize){
-            text.setFont(Font.font(fontFamily, fontSize));
-            double textWidth = text.getLayoutBounds().getWidth();
-            if (textWidth <= maxWidth) {
+        
+        Text testText = new Text(message);
+        
+        // Gradually reduce font size until text fits
+        while (fontSize > minFontSize) {
+            testText.setFont(Font.font(fontFamily, fontSize));
+            if (testText.getLayoutBounds().getWidth() <= maxWidth) {
                 break;
             }
-            fontSize -= 1;
+            fontSize -= 1.0;
         }
+        
         motivationalMessageLabel.setFont(Font.font(fontFamily, fontSize));
         motivationalMessageLabel.setText(message);
     }
