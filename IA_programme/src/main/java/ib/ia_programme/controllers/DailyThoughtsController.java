@@ -35,7 +35,6 @@ public class DailyThoughtsController {
 
     public void setStage(Stage stage){
         this.stage = stage;
-
     }
 
     public void switchScene(String fxmlFilePath, Button sourceButton) throws IOException{
@@ -133,7 +132,7 @@ public class DailyThoughtsController {
                 });
     }
 
-    private void successPopup(String message){
+    public void successPopup(String message){
         Alert success = new Alert(AlertType.INFORMATION);
         success.setTitle("Success");
         success.setHeaderText(null);

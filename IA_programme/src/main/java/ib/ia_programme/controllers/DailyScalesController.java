@@ -66,7 +66,7 @@ public class DailyScalesController{
         }
     }
 
-    private void successPopup(String message){
+    public void successPopup(String message){
         Alert success = new Alert(AlertType.INFORMATION);
         success.setTitle("Success");
         success.setHeaderText(null);

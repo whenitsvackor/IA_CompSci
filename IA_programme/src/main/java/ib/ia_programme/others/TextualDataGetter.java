@@ -4,11 +4,11 @@ import java.time.LocalDate;
 
 public class TextualDataGetter {
 
-    private LocalDate entry_date;
-    private String overview;
-    private String todo;
-    private String goals;
-    private String gratitude;
+    private final LocalDate entry_date;
+    private final String overview;
+    private final String todo;
+    private final String goals;
+    private final String gratitude;
 
     public TextualDataGetter(LocalDate entry_date, String overview, String todo, String goals, String gratitude){
         this.entry_date = entry_date;

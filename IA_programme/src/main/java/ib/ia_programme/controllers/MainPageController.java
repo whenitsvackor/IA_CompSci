@@ -36,7 +36,7 @@ public class MainPageController {
     }
 
     @FXML public void initialize() {
-        onRegenerateButtonClick();
+        newMotivationalMessage();
     }
 
     @FXML public void onDailyScalesButtonClick() throws IOException{
@@ -55,23 +55,26 @@ public class MainPageController {
     }
 
     @FXML public void onRegenerateButtonClick(){
+        newMotivationalMessage();
+    }
+
+    public void newMotivationalMessage(){
         String label = MotivationalMessagesCreator.messageCreator();
         setMotivationalMessageSize(label);
     }
 
-    private void setMotivationalMessageSize(String message){
+    public void setMotivationalMessageSize(String message){
         double maxWidth = motivationalMessageLabel.getPrefWidth();
-        double fontSize = 36;
-        double minFontSize = 10;
+        double fontSize = 36.0;
+        double minFontSize = 10.0;
         String fontFamily = motivationalMessageLabel.getFont().getFamily();
         Text text = new Text(message);
         while (fontSize > minFontSize){
             text.setFont(Font.font(fontFamily, fontSize));
-            double textWidth = text.getLayoutBounds().getWidth();
-            if (textWidth <= maxWidth) {
+            if (text.getLayoutBounds().getWidth() <= maxWidth){
                 break;
             }
-            fontSize -= 1;
+            fontSize -= 1.0;
         }
         motivationalMessageLabel.setFont(Font.font(fontFamily, fontSize));
         motivationalMessageLabel.setText(message);
