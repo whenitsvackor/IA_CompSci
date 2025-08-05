@@ -1,0 +1,12 @@
+ib\ia_programme\controllers\PersonalImprovementController.class
+ib\ia_programme\controllers\DailyThoughtsController$1.class
+module-info.class
+ib\ia_programme\controllers\DailyScalesController.class
+ib\ia_programme\others\NumericDataGetter.class
+ib\ia_programme\others\TextualDataGetter.class
+ib\ia_programme\TrackerApplication.class
+ib\ia_programme\util\DBConnection.class
+ib\ia_programme\controllers\DailyThoughtsController.class
+ib\ia_programme\controllers\MainPageController.class
+ib\ia_programme\controllers\Tester.class
+ib\ia_programme\others\MotivationalMessagesCreator.class
