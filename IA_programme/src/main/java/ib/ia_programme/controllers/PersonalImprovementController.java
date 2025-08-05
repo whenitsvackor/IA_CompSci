@@ -75,147 +75,135 @@ public class PersonalImprovementController {
 
     @FXML
     public void onMoodGraphButtonClick() {
-        if (!moodGraphVisible) {
+        moodGraphVisible = !moodGraphVisible;
+        if (moodGraphVisible) {
             moodGraphContainer.getChildren().clear();
-            LineChart<String, Number> lineChart = createGraph("mood_scale", predictionCheck);
-            moodGraphContainer.getChildren().add(lineChart);
+            moodGraphContainer.getChildren().add(createGraph("mood_scale", predictionCheck));
             moodGraphContainer.setVisible(true);
             moodGraphContainer.setManaged(true);
             moodGraphButton.setText("Hide Rate My Day");
-            moodGraphVisible = true;
         } else {
             moodGraphContainer.setVisible(false);
             moodGraphContainer.setManaged(false);
             moodGraphButton.setText("Rate My Day");
-            moodGraphVisible = false;
         }
     }
 
     @FXML
     public void onAnxietyGraphButtonClick() {
-        if (!anxietyGraphVisible) {
+        anxietyGraphVisible = !anxietyGraphVisible;
+        if (anxietyGraphVisible) {
             anxietyGraphContainer.getChildren().clear();
-            LineChart<String, Number> lineChart = createGraph("anxiety_scale", predictionCheck);
-            anxietyGraphContainer.getChildren().add(lineChart);
+            anxietyGraphContainer.getChildren().add(createGraph("anxiety_scale", predictionCheck));
             anxietyGraphContainer.setVisible(true);
             anxietyGraphContainer.setManaged(true);
             anxietyGraphButton.setText("Hide Anxiety Log");
-            anxietyGraphVisible = true;
         } else {
             anxietyGraphContainer.setVisible(false);
             anxietyGraphContainer.setManaged(false);
             anxietyGraphButton.setText("Anxiety Log");
-            anxietyGraphVisible = false;
         }
     }
 
     @FXML
-    public void onPhysicalGraphButtonClick(){
-        if (!physicalGraphVisible){
+    public void onPhysicalGraphButtonClick() {
+        physicalGraphVisible = !physicalGraphVisible;
+        if (physicalGraphVisible) {
             physicalGraphContainer.getChildren().clear();
-            LineChart<String, Number> lineChart = createGraph("physical_scale", predictionCheck);
-            physicalGraphContainer.getChildren().add(lineChart);
+            physicalGraphContainer.getChildren().add(createGraph("physical_scale", predictionCheck));
             physicalGraphContainer.setVisible(true);
             physicalGraphContainer.setManaged(true);
             physicalGraphButton.setText("Hide Physical Wellbeing Log");
-            physicalGraphVisible = true;
         } else {
             physicalGraphContainer.setVisible(false);
             physicalGraphContainer.setManaged(false);
             physicalGraphButton.setText("Physical Wellbeing Log");
-            physicalGraphVisible = false;
         }
     }
 
-    @FXML public void onDailyThoughtsCalendarButtonClick(){
-        if (!calendarVisible){
+    @FXML 
+    public void onDailyThoughtsCalendarButtonClick() {
+        calendarVisible = !calendarVisible;
+        if (calendarVisible) {
             calendarContainer.setVisible(true);
             calendarContainer.setManaged(true);
             dailyThoughtsCalendarButton.setText("Hide Daily Thoughts");
-            calendarVisible = true;
             createCalendar();
-        } else{
+        } else {
             calendarContainer.setVisible(false);
             calendarContainer.setManaged(false);
             dailyThoughtsCalendarButton.setText("Daily Thoughts");
-            calendarVisible = false;
         }
     }
 
-    @FXML public void onPreviousMonthButtonClick(){
+    @FXML 
+    public void onPreviousMonthButtonClick() {
         currentYearMonth = currentYearMonth.minusMonths(1);
         createCalendar();
     }
 
-    @FXML public void onNextMonthButtonClick(){
+    @FXML 
+    public void onNextMonthButtonClick() {
         currentYearMonth = currentYearMonth.plusMonths(1);
         createCalendar();
     }
 
-    public List<NumericDataGetter> getScaleData(String type) throws SQLException{
-        List<NumericDataGetter> scaleData = new ArrayList<>();
-        String sql = "SELECT entry_date, " + type + " FROM daily_entries ORDER BY entry_date";
-        try (Connection connection = getConnection(); PreparedStatement statement = connection.prepareStatement(sql)){
+    public List<NumericDataGetter> getScaleData(String scaleType) throws SQLException {
+        List<NumericDataGetter> data = new ArrayList<>();
+        String sql = "SELECT entry_date, " + scaleType + " FROM daily_entries ORDER BY entry_date";
+        
+        try (Connection connection = getConnection(); 
+             PreparedStatement statement = connection.prepareStatement(sql)) {
             ResultSet resultSet = statement.executeQuery();
-            while (resultSet.next()){
-                int val = resultSet.getInt(type);
+            while (resultSet.next()) {
+                int value = resultSet.getInt(scaleType);
                 LocalDate date = resultSet.getDate("entry_date").toLocalDate();
-                if (val != 0){
-                    scaleData.add(new NumericDataGetter(date, val));
+                
+                // Only include valid entries
+                if (value > 0) {
+                    data.add(new NumericDataGetter(date, value));
                 }
             }
         }
-        return scaleData;
+        return data;
     }
 
-    public LineChart<String, Number> createGraph(String type, CheckBox predictionCheck){
+    public LineChart<String, Number> createGraph(String scaleType, CheckBox showPrediction) {
         CategoryAxis xAxis = new CategoryAxis();
         NumberAxis yAxis = new NumberAxis(1, 5, 1);
-        LineChart<String, Number> lineChart = new LineChart<>(xAxis, yAxis);
-        try{
-            List<NumericDataGetter> data = getScaleData(type);
-            XYChart.Series<String, Number> currentSeries = new XYChart.Series<>();
-            currentSeries.setName("Actual");
-            int seriesCounter = 1;
-            for (NumericDataGetter point : data){
-                LocalDate date = point.getDate();
-                Integer value = point.getValue();
-                if (value != 0){
-                    currentSeries.getData().add(new XYChart.Data<>(date.toString(), value));
-                } else{
-                    if (!currentSeries.getData().isEmpty()){
-                        currentSeries.setName("Actual " + seriesCounter++);
-                        lineChart.getData().add(currentSeries);
-                        currentSeries = new XYChart.Series<>();
-                    }
+        LineChart<String, Number> chart = new LineChart<>(xAxis, yAxis);
+        
+        try {
+            List<NumericDataGetter> data = getScaleData(scaleType);
+            XYChart.Series<String, Number> series = new XYChart.Series<>();
+            series.setName("Actual");
+            
+            for (NumericDataGetter point : data) {
+                if (point.getValue() > 0) {
+                    series.getData().add(new XYChart.Data<>(point.getDate().toString(), point.getValue()));
                 }
             }
-            if (!currentSeries.getData().isEmpty()) {
-                currentSeries.setName("Actual " + seriesCounter);
-                lineChart.getData().add(currentSeries);
+            
+            chart.getData().add(series);
+            
+            // Add predictions if checkbox is selected
+            if (showPrediction.isSelected() && !series.getData().isEmpty()) {
+                addPrediction(series.getData(), chart);
             }
-            if (predictionCheck.isSelected()){
-                List<XYChart.Data<String, Number>> allData = new ArrayList<>();
-                for (XYChart.Series<String, Number> s : lineChart.getData()){
-                    allData.addAll(s.getData());
-                }
-                if (allData.size() >= 2){
-                    XYChart.Series<String, Number> predictionSeries = new XYChart.Series<>();
-                    predictionSeries.setName("Predicted");
-                    addPrediction(allData, predictionSeries);
-                    lineChart.getData().add(predictionSeries);
-                }
-            }
-        } catch (Exception e){
-            System.out.println(e);
+        } catch (Exception e) {
+            System.err.println("Error creating graph: " + e.getMessage());
         }
-        return lineChart;
+        return chart;
     }
 
-    public void addPrediction(List<XYChart.Data<String, Number>> actualData, XYChart.Series<String, Number> predictionSeries){
-        int size = actualData.size();
+    private void addPrediction(List<XYChart.Data<String, Number>> actualData, LineChart<String, Number> chart) {
+        if (actualData.size() < 2) return;
+        
+        // Simple linear regression
+        int n = actualData.size();
         double sumX = 0, sumY = 0, sumXY = 0, sumX2 = 0;
-        for (int i = 0; i < size; i++){
+        
+        for (int i = 0; i < n; i++) {
             double x = i;
             double y = actualData.get(i).getYValue().doubleValue();
             sumX += x;
@@ -223,81 +211,111 @@ public class PersonalImprovementController {
             sumXY += x * y;
             sumX2 += x * x;
         }
-        double slope = (size * sumXY - sumX * sumY) / (size * sumX2 - sumX * sumX);
-        double intercept = (sumY - slope * sumX) / size;
-        String lastDateString = actualData.get(size - 1).getXValue();
-        LocalDate lastDate = LocalDate.parse(lastDateString);
-        for (int i = 1; i <= 7; i++){
+        
+        double slope = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
+        double intercept = (sumY - slope * sumX) / n;
+        
+        XYChart.Series<String, Number> predictionSeries = new XYChart.Series<>();
+        predictionSeries.setName("Predicted");
+        
+        LocalDate lastDate = LocalDate.parse(actualData.get(n - 1).getXValue());
+        for (int i = 1; i <= 7; i++) {
             LocalDate futureDate = lastDate.plusDays(i);
-            double predictedY = slope * (size + i - 1) + intercept;
-            predictionSeries.getData().add(new XYChart.Data<>(futureDate.toString(), predictedY));
+            double predictedValue = slope * (n + i - 1) + intercept;
+            predictionSeries.getData().add(new XYChart.Data<>(futureDate.toString(), predictedValue));
         }
+        
+        chart.getData().add(predictionSeries);
     }
 
-    public Map<LocalDate, TextualDataGetter> getLogsForMonth(YearMonth month){
+    public Map<LocalDate, TextualDataGetter> getLogsForMonth(YearMonth month) {
         Map<LocalDate, TextualDataGetter> logs = new HashMap<>();
         String sql = "SELECT * FROM daily_entries WHERE YEAR(entry_date) = ? AND MONTH(entry_date) = ?";
-        try (Connection connection = DBConnection.getConnection(); PreparedStatement statement = connection.prepareStatement(sql)){
+        
+        try (Connection connection = DBConnection.getConnection(); 
+             PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setInt(1, month.getYear());
             statement.setInt(2, month.getMonthValue());
             ResultSet resultSet = statement.executeQuery();
-            while (resultSet.next()){
+            
+            while (resultSet.next()) {
                 LocalDate date = resultSet.getDate("entry_date").toLocalDate();
-                logs.put(date, new TextualDataGetter(date, resultSet.getString("overview"), resultSet.getString("todo"), resultSet.getString("goals"), resultSet.getString("gratitude")));
+                TextualDataGetter log = new TextualDataGetter(
+                    date,
+                    resultSet.getString("overview"), 
+                    resultSet.getString("todo"), 
+                    resultSet.getString("goals"), 
+                    resultSet.getString("gratitude")
+                );
+                logs.put(date, log);
             }
-        } catch (SQLException e){
-            System.out.println(e);
+        } catch (SQLException e) {
+            System.err.println("Database error while fetching logs: " + e.getMessage());
         }
         return logs;
     }
 
-    public void createCalendar(){
+    public void createCalendar() {
         calendarGrid.getChildren().clear();
+        
+        // Set month header
         String monthName = currentYearMonth.getMonth().getDisplayName(TextStyle.SHORT, Locale.ENGLISH);
         monthLabel.setText(monthName + " " + currentYearMonth.getYear());
-        Map<LocalDate, TextualDataGetter> logs = getLogsForMonth(currentYearMonth);
+        
+        // Add day headers
         DayOfWeek[] days = DayOfWeek.values();
-        for (int i=0; i<days.length; i++){
-            Label label = new Label(days[i].getDisplayName(TextStyle.SHORT, Locale.ENGLISH));
-            label.getStyleClass().add("calendar-header");
-            calendarGrid.add(label, i, 0);
+        for (int i = 0; i < days.length; i++) {
+            Label dayHeader = new Label(days[i].getDisplayName(TextStyle.SHORT, Locale.ENGLISH));
+            dayHeader.getStyleClass().add("calendar-header");
+            calendarGrid.add(dayHeader, i, 0);
         }
+        
+        // Get logs for the month
+        Map<LocalDate, TextualDataGetter> logs = getLogsForMonth(currentYearMonth);
+        
+        // Add calendar days
         LocalDate firstOfMonth = currentYearMonth.atDay(1);
-        int startDay = firstOfMonth.getDayOfWeek().getValue() - 1;
+        int startCol = firstOfMonth.getDayOfWeek().getValue() - 1;
         int daysInMonth = currentYearMonth.lengthOfMonth();
-        int column = startDay;
-        int row = 1;
-        for (int day=1; day<=daysInMonth; day++) {
+        
+        for (int day = 1; day <= daysInMonth; day++) {
             LocalDate date = currentYearMonth.atDay(day);
             Label dayLabel = new Label(String.valueOf(day));
             dayLabel.getStyleClass().add("calendar-day");
+            
+            // Check if this day has log entries
             if (logs.containsKey(date)) {
                 TextualDataGetter log = logs.get(date);
-                boolean hasEntry = isNotEmpty(log.getOverview()) || isNotEmpty(log.getTodo()) || isNotEmpty(log.getGoals()) || isNotEmpty(log.getGratitude());
-                if (hasEntry){
+                if (hasLogEntries(log)) {
                     dayLabel.getStyleClass().add("calendar-day-filled");
-                    dayLabel.setOnMouseClicked(event -> showLogDetailsPopup(log));
+                    dayLabel.setOnMouseClicked(_ -> showLogPopup(log));
                 }
             }
-            calendarGrid.add(dayLabel, column, row);
-            column++;
-            if (column > 6){
-                column = 0;
-                row++;
-            }
+            
+            int col = (startCol + day - 1) % 7;
+            int row = (startCol + day - 1) / 7 + 1;
+            calendarGrid.add(dayLabel, col, row);
         }
     }
 
-    private boolean isNotEmpty(String text){
-        return text != null && !text.trim().isEmpty();
+    private boolean hasLogEntries(TextualDataGetter log) {
+        return (log.getOverview() != null && !log.getOverview().trim().isEmpty()) ||
+               (log.getTodo() != null && !log.getTodo().trim().isEmpty()) ||
+               (log.getGoals() != null && !log.getGoals().trim().isEmpty()) ||
+               (log.getGratitude() != null && !log.getGratitude().trim().isEmpty());
     }
 
-    private void showLogDetailsPopup(TextualDataGetter log){
-        String content = "Things To Make The Day Special: " + "\n" + log.getOverview() + "\n" + "Today's To-Do List: " + "\n" + log.getTodo() + "\n" + "Goals To Keep Me Going: " + "\n" + log.getGoals() + "\n" + "Grateful Thoughts: " + "\n" + log.getGratitude();
+    private void showLogPopup(TextualDataGetter log) {
+        StringBuilder content = new StringBuilder();
+        content.append("Things To Make The Day Special:\n").append(log.getOverview()).append("\n\n");
+        content.append("Today's To-Do List:\n").append(log.getTodo()).append("\n\n");
+        content.append("Goals To Keep Me Going:\n").append(log.getGoals()).append("\n\n");
+        content.append("Grateful Thoughts:\n").append(log.getGratitude());
+        
         javafx.scene.control.Alert alert = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.INFORMATION);
         alert.setTitle("Daily Thoughts");
         alert.setHeaderText("Entries for " + log.getDate());
-        alert.setContentText(content);
+        alert.setContentText(content.toString());
         alert.showAndWait();
     }
 
