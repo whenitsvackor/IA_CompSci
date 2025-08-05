@@ -152,8 +152,8 @@ public class PersonalImprovementController {
         createCalendar();
     }
 
-    public List<ScaleDataPoint> getScaleData(String type) throws SQLException{
-        List<ScaleDataPoint> scaleData = new ArrayList<>();
+    public List<NumericDataGetter> getScaleData(String type) throws SQLException{
+        List<NumericDataGetter> scaleData = new ArrayList<>();
         String sql = "SELECT entry_date, " + type + " FROM daily_entries ORDER BY entry_date";
         try (Connection connection = getConnection(); PreparedStatement statement = connection.prepareStatement(sql)){
             ResultSet resultSet = statement.executeQuery();
@@ -161,7 +161,7 @@ public class PersonalImprovementController {
                 int val = resultSet.getInt(type);
                 LocalDate date = resultSet.getDate("entry_date").toLocalDate();
                 if (val != 0){
-                    scaleData.add(new ScaleDataPoint(date, val));
+                    scaleData.add(new NumericDataGetter(date, val));
                 }
             }
         }
@@ -173,11 +173,11 @@ public class PersonalImprovementController {
         NumberAxis yAxis = new NumberAxis(1, 5, 1);
         LineChart<String, Number> lineChart = new LineChart<>(xAxis, yAxis);
         try{
-            List<ScaleDataPoint> data = getScaleData(type);
+            List<NumericDataGetter> data = getScaleData(type);
             XYChart.Series<String, Number> currentSeries = new XYChart.Series<>();
             currentSeries.setName("Actual");
             int seriesCounter = 1;
-            for (ScaleDataPoint point : data){
+            for (NumericDataGetter point : data){
                 LocalDate date = point.getDate();
                 Integer value = point.getValue();
                 if (value != 0){
@@ -234,8 +234,8 @@ public class PersonalImprovementController {
         }
     }
 
-    public Map<LocalDate, DailyThoughtLogs> getLogsForMonth(YearMonth month){
-        Map<LocalDate, DailyThoughtLogs> logs = new HashMap<>();
+    public Map<LocalDate, TextualDataGetter> getLogsForMonth(YearMonth month){
+        Map<LocalDate, TextualDataGetter> logs = new HashMap<>();
         String sql = "SELECT * FROM daily_entries WHERE YEAR(entry_date) = ? AND MONTH(entry_date) = ?";
         try (Connection connection = DBConnection.getConnection(); PreparedStatement statement = connection.prepareStatement(sql)){
             statement.setInt(1, month.getYear());
@@ -243,7 +243,7 @@ public class PersonalImprovementController {
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()){
                 LocalDate date = resultSet.getDate("entry_date").toLocalDate();
-                logs.put(date, new DailyThoughtLogs(date, resultSet.getString("overview"), resultSet.getString("todo"), resultSet.getString("goals"), resultSet.getString("gratitude")));
+                logs.put(date, new TextualDataGetter(date, resultSet.getString("overview"), resultSet.getString("todo"), resultSet.getString("goals"), resultSet.getString("gratitude")));
             }
         } catch (SQLException e){
             System.out.println(e);
@@ -255,7 +255,7 @@ public class PersonalImprovementController {
         calendarGrid.getChildren().clear();
         String monthName = currentYearMonth.getMonth().getDisplayName(TextStyle.SHORT, Locale.ENGLISH);
         monthLabel.setText(monthName + " " + currentYearMonth.getYear());
-        Map<LocalDate, DailyThoughtLogs> logs = getLogsForMonth(currentYearMonth);
+        Map<LocalDate, TextualDataGetter> logs = getLogsForMonth(currentYearMonth);
         DayOfWeek[] days = DayOfWeek.values();
         for (int i=0; i<days.length; i++){
             Label label = new Label(days[i].getDisplayName(TextStyle.SHORT, Locale.ENGLISH));
@@ -272,7 +272,7 @@ public class PersonalImprovementController {
             Label dayLabel = new Label(String.valueOf(day));
             dayLabel.getStyleClass().add("calendar-day");
             if (logs.containsKey(date)) {
-                DailyThoughtLogs log = logs.get(date);
+                TextualDataGetter log = logs.get(date);
                 boolean hasEntry = isNotEmpty(log.getOverview()) || isNotEmpty(log.getTodo()) || isNotEmpty(log.getGoals()) || isNotEmpty(log.getGratitude());
                 if (hasEntry){
                     dayLabel.getStyleClass().add("calendar-day-filled");
@@ -292,7 +292,7 @@ public class PersonalImprovementController {
         return text != null && !text.trim().isEmpty();
     }
 
-    private void showLogDetailsPopup(DailyThoughtLogs log){
+    private void showLogDetailsPopup(TextualDataGetter log){
         String content = "Things To Make The Day Special: " + "\n" + log.getOverview() + "\n" + "Today's To-Do List: " + "\n" + log.getTodo() + "\n" + "Goals To Keep Me Going: " + "\n" + log.getGoals() + "\n" + "Grateful Thoughts: " + "\n" + log.getGratitude();
         javafx.scene.control.Alert alert = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.INFORMATION);
         alert.setTitle("Daily Thoughts");
