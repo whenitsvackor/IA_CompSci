@@ -81,11 +81,10 @@ public class DailyThoughtsController {
                 });
         todaysToDoListTextArea.setOnKeyPressed
                 (event -> {
-                    switch (event.getCode()){
-                        case ENTER -> {
-                            int caretPosition = todaysToDoListTextArea.getCaretPosition();
-                            todaysToDoListTextArea.insertText(caretPosition, "[ ] ");
-                        }
+                    if (event.getCode() == javafx.scene.input.KeyCode.ENTER) {
+                        event.consume();
+                        int caretPosition = todaysToDoListTextArea.getCaretPosition();
+                        todaysToDoListTextArea.insertText(caretPosition, "[ ] ");
                     }
                 });
         todaysToDoListTextArea.setOnMouseClicked

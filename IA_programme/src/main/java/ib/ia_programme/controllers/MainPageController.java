@@ -73,23 +73,31 @@ public class MainPageController {
     }
 
     private void adjustFontSizeForMessage(String message) {
-        double maxWidth = motivationalMessageLabel.getPrefWidth();
-        double fontSize = 36.0;
-        double minFontSize = 10.0;
+        double available = motivationalMessageLabel.getWidth();
+        if (available <= 0) {
+            available = motivationalMessageLabel.getPrefWidth();
+        }
+        // small margin to avoid clipping borders
+        double maxWidth = Math.max(0, available - 8);
+
         String fontFamily = motivationalMessageLabel.getFont().getFamily();
-        
-        Text testText = new Text(message);
-        
-        // Gradually reduce font size until text fits
+        double fontSize = 36.0;
+        double minFontSize = 4.0;
+
+        Text measurer = new Text(message);
+        measurer.setBoundsType(javafx.scene.text.TextBoundsType.VISUAL);
+
         while (fontSize > minFontSize) {
-            testText.setFont(Font.font(fontFamily, fontSize));
-            if (testText.getLayoutBounds().getWidth() <= maxWidth) {
+            measurer.setFont(Font.font(fontFamily, fontSize));
+            double textWidth = measurer.getLayoutBounds().getWidth();
+            if (textWidth <= maxWidth) {
                 break;
             }
             fontSize -= 1.0;
         }
-        
-        motivationalMessageLabel.setFont(Font.font(fontFamily, fontSize));
+
+        // Use CSS so it wins over stylesheet defaults
+        motivationalMessageLabel.setStyle("-fx-font-size: " + fontSize + "px;");
         motivationalMessageLabel.setText(message);
     }
 }

@@ -78,7 +78,7 @@ public class MotivationalMessagesCreator{
         int scaleChoice = rand.nextInt(3);
         int weeklyAvg = 0;
         String message = DEFAULT_MESSAGE;
-        int randomEntryID = rand.nextInt(30) + 1;  // Random message from available entries
+        int randomEntryID = rand.nextInt(20) + 1;  // Random message from available entries
         
         switch (scaleChoice) {
             case 0:

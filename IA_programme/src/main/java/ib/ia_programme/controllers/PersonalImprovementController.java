@@ -15,8 +15,11 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.collections.FXCollections;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -78,7 +81,9 @@ public class PersonalImprovementController {
         moodGraphVisible = !moodGraphVisible;
         if (moodGraphVisible) {
             moodGraphContainer.getChildren().clear();
-            moodGraphContainer.getChildren().add(createGraph("mood_scale", predictionCheck));
+            LineChart<String, Number> chart = createGraph("mood_scale", predictionCheck);
+            applyChartSizing(chart, moodGraphContainer);
+            moodGraphContainer.getChildren().add(chart);
             moodGraphContainer.setVisible(true);
             moodGraphContainer.setManaged(true);
             moodGraphButton.setText("Hide Rate My Day");
@@ -94,7 +99,9 @@ public class PersonalImprovementController {
         anxietyGraphVisible = !anxietyGraphVisible;
         if (anxietyGraphVisible) {
             anxietyGraphContainer.getChildren().clear();
-            anxietyGraphContainer.getChildren().add(createGraph("anxiety_scale", predictionCheck));
+            LineChart<String, Number> chart = createGraph("anxiety_scale", predictionCheck);
+            applyChartSizing(chart, anxietyGraphContainer);
+            anxietyGraphContainer.getChildren().add(chart);
             anxietyGraphContainer.setVisible(true);
             anxietyGraphContainer.setManaged(true);
             anxietyGraphButton.setText("Hide Anxiety Log");
@@ -110,7 +117,9 @@ public class PersonalImprovementController {
         physicalGraphVisible = !physicalGraphVisible;
         if (physicalGraphVisible) {
             physicalGraphContainer.getChildren().clear();
-            physicalGraphContainer.getChildren().add(createGraph("physical_scale", predictionCheck));
+            LineChart<String, Number> chart = createGraph("physical_scale", predictionCheck);
+            applyChartSizing(chart, physicalGraphContainer);
+            physicalGraphContainer.getChildren().add(chart);
             physicalGraphContainer.setVisible(true);
             physicalGraphContainer.setManaged(true);
             physicalGraphButton.setText("Hide Physical Wellbeing Log");
@@ -168,26 +177,77 @@ public class PersonalImprovementController {
         return data;
     }
 
+    private void applyChartSizing(LineChart<String, Number> chart, VBox container) {
+        container.setFillWidth(true);
+        chart.setMinSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
+        chart.setMaxWidth(Double.MAX_VALUE);
+        chart.prefWidthProperty().bind(container.widthProperty());
+        chart.setPrefHeight(container.getPrefHeight());
+        VBox.setVgrow(chart, Priority.NEVER);
+    }
+
+    // Build a continuous date range (inclusive)
+    private List<String> buildDateRange(LocalDate start, LocalDate end) {
+        List<String> out = new ArrayList<>();
+        for (LocalDate d = start; !d.isAfter(end); d = d.plusDays(1)) {
+            out.add(d.toString());
+        }
+        return out;
+    }
+
     public LineChart<String, Number> createGraph(String scaleType, CheckBox showPrediction) {
         CategoryAxis xAxis = new CategoryAxis();
         NumberAxis yAxis = new NumberAxis(1, 5, 1);
         LineChart<String, Number> chart = new LineChart<>(xAxis, yAxis);
-        
+
+        // Aesthetics
+        chart.getStyleClass().add("tracker-line-chart");
+        chart.setCreateSymbols(true);
+        chart.setAnimated(false);
+        chart.setLegendVisible(false);
+        chart.setHorizontalGridLinesVisible(true);
+        chart.setVerticalGridLinesVisible(false);
+
+        xAxis.setTickLabelRotation(45);
+        xAxis.setTickLabelGap(5);
+        yAxis.setMinorTickVisible(false);
+        yAxis.setAutoRanging(false);
+        yAxis.setLowerBound(1);
+        yAxis.setUpperBound(5);
+        yAxis.setTickUnit(1);
+
         try {
             List<NumericDataGetter> data = getScaleData(scaleType);
-            XYChart.Series<String, Number> series = new XYChart.Series<>();
-            series.setName("Actual");
-            
+            // Determine range: last 30 days by default, expanded to include data
+            LocalDate today = LocalDate.now();
+            LocalDate minDate = null, maxDate = null;
+            Map<LocalDate, Integer> valueByDate = new HashMap<>();
             for (NumericDataGetter point : data) {
-                if (point.getValue() > 0) {
-                    series.getData().add(new XYChart.Data<>(point.getDate().toString(), point.getValue()));
+                Integer v = point.getValue();
+                if (v != null && v > 0) {
+                    valueByDate.put(point.getDate(), v);
+                    if (minDate == null || point.getDate().isBefore(minDate)) minDate = point.getDate();
+                    if (maxDate == null || point.getDate().isAfter(maxDate)) maxDate = point.getDate();
                 }
             }
-            
+            LocalDate end = (maxDate != null && maxDate.isAfter(today)) ? maxDate : today;
+            LocalDate start = end.minusDays(30);
+            if (minDate != null && minDate.isBefore(start)) start = minDate;
+
+            List<String> categories = buildDateRange(start, end);
+            xAxis.setCategories(FXCollections.observableArrayList(categories));
+
+            XYChart.Series<String, Number> series = new XYChart.Series<>();
+            series.setName("Actual");
+            for (String cat : categories) {
+                LocalDate d = LocalDate.parse(cat);
+                Integer v = valueByDate.get(d);
+                series.getData().add(new XYChart.Data<>(cat, (v != null && v > 0) ? v : null));
+            }
+
             chart.getData().add(series);
-            
-            // Add predictions if checkbox is selected
-            if (showPrediction.isSelected() && !series.getData().isEmpty()) {
+
+            if (showPrediction.isSelected()) {
                 addPrediction(series.getData(), chart);
             }
         } catch (Exception e) {
@@ -197,34 +257,49 @@ public class PersonalImprovementController {
     }
 
     private void addPrediction(List<XYChart.Data<String, Number>> actualData, LineChart<String, Number> chart) {
-        if (actualData.size() < 2) return;
-        
-        // Simple linear regression
-        int n = actualData.size();
+        // Filter out nulls for regression
+        List<XYChart.Data<String, Number>> nonNull = new ArrayList<>();
+        for (XYChart.Data<String, Number> d : actualData) {
+            if (d.getYValue() != null) nonNull.add(d);
+        }
+        if (nonNull.size() < 2) return;
+
+        int n = nonNull.size();
         double sumX = 0, sumY = 0, sumXY = 0, sumX2 = 0;
-        
         for (int i = 0; i < n; i++) {
-            double x = i;
-            double y = actualData.get(i).getYValue().doubleValue();
+            double x = i; // index over known points
+            double y = nonNull.get(i).getYValue().doubleValue();
             sumX += x;
             sumY += y;
             sumXY += x * y;
             sumX2 += x * x;
         }
-        
-        double slope = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
+        double denom = (n * sumX2 - sumX * sumX);
+        if (denom == 0) return;
+        double slope = (n * sumXY - sumX * sumY) / denom;
         double intercept = (sumY - slope * sumX) / n;
-        
+
+        // Determine last date from the x-axis categories
+        CategoryAxis xAxis = (CategoryAxis) chart.getXAxis();
+        List<String> cats = new ArrayList<>(xAxis.getCategories());
+        if (cats.isEmpty()) return;
+        LocalDate lastDate = LocalDate.parse(cats.get(cats.size() - 1));
+
+        // Extend categories for next 7 days
+        List<String> extended = new ArrayList<>(cats);
+        for (int i = 1; i <= 7; i++) {
+            extended.add(lastDate.plusDays(i).toString());
+        }
+        xAxis.setCategories(FXCollections.observableArrayList(extended));
+
         XYChart.Series<String, Number> predictionSeries = new XYChart.Series<>();
         predictionSeries.setName("Predicted");
-        
-        LocalDate lastDate = LocalDate.parse(actualData.get(n - 1).getXValue());
         for (int i = 1; i <= 7; i++) {
-            LocalDate futureDate = lastDate.plusDays(i);
-            double predictedValue = slope * (n + i - 1) + intercept;
-            predictionSeries.getData().add(new XYChart.Data<>(futureDate.toString(), predictedValue));
+            double predicted = slope * (n + i - 1) + intercept;
+            // clamp to axis bounds
+            predicted = Math.max(1.0, Math.min(5.0, predicted));
+            predictionSeries.getData().add(new XYChart.Data<>(lastDate.plusDays(i).toString(), predicted));
         }
-        
         chart.getData().add(predictionSeries);
     }
 
